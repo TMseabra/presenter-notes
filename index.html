@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self'; media-src 'self' blob: mediastream:">
+  <title>Presenter Notes</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header>
+    <label>Big screen <select id="display"></select></label>
+    <button id="open">Open notes…</button>
+    <button id="prev" title="Ctrl+Alt+Left">◀</button>
+    <span id="counter">0/0</span>
+    <button id="next" title="Ctrl+Alt+Right">▶</button>
+    <button id="tele" title="Ctrl+Alt+Space">Teleprompter</button>
+    <label class="check"><input type="checkbox" id="ontop"> Always on top</label>
+    <label class="check"><input type="checkbox" id="hide"> Hide from screen sharing</label>
+    <span class="spacer"></span>
+    <button id="font-" title="Smaller text">A−</button>
+    <button id="font+" title="Larger text">A+</button>
+    <span id="timer">00:00:00</span>
+    <button id="timer-toggle">Start</button>
+    <button id="timer-reset">Reset</button>
+  </header>
+  <main>
+    <section id="preview"><video id="video" autoplay muted></video><p id="status"></p></section>
+    <section id="notes"></section>
+  </main>
+  <script src="renderer.js"></script>
+</body>
+</html>

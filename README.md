@@ -2,7 +2,7 @@
 
 Desktop app for people who **present code live** on a big screen. On your own PC screen you see, side by side, a **live preview of the big screen** (including the mouse cursor) and **your speaker notes**. The audience only sees the code.
 
-> 🚧 **Work in progress.** This README describes the goal, the design and the plan. There is no usable version yet.
+> 🚧 **Early version (0.1).** All roadmap items are implemented but only smoke-tested: cursor in the preview and latency still need validation on a real two-display setup.
 
 ## The problem
 
@@ -67,13 +67,13 @@ Because the app runs on your PC screen and captures the **other** display, there
 
 ## Roadmap
 
-- [ ] Basic Electron window
-- [ ] Show the notes (dark mode, large text)
-- [ ] Read the notes from a `.md` file
-- [ ] Keyboard shortcuts (next and previous note)
-- [ ] Live preview of the second display
-- [ ] Always-on-top window and `setContentProtection`
-- [ ] Timer and teleprompter mode
+- [x] Basic Electron window
+- [x] Show the notes (dark mode, large text)
+- [x] Read the notes from a `.md` file
+- [x] Keyboard shortcuts (next and previous note)
+- [x] Live preview of the second display
+- [x] Always-on-top window and `setContentProtection`
+- [x] Timer and teleprompter mode
 
 ## Similar projects
 
@@ -94,9 +94,16 @@ Some existing projects solve part of the problem:
 
 ## Running
 
-Not available yet. Once it exists:
-
 ```bash
 npm install
 npm start
 ```
+
+If you start it from a terminal that sets `ELECTRON_RUN_AS_NODE` (for example VS Code's), unset it first.
+
+Notes are split into one note per `## ` heading; see `notes.md` for an example.
+
+| Shortcut | Action |
+|---|---|
+| `Ctrl+Alt+Right` / `Ctrl+Alt+Left` | Next / previous note (global) |
+| `Ctrl+Alt+Space` | Start / stop teleprompter (global) |

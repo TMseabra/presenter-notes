@@ -1,0 +1,21 @@
+* { box-sizing: border-box; }
+html, body { height: 100%; margin: 0; }
+body { display: flex; flex-direction: column; background: #111; color: #eee; font-family: 'Segoe UI', sans-serif; }
+header { display: flex; gap: 10px; align-items: center; padding: 8px 12px; background: #1c1c1c; border-bottom: 1px solid #333; flex-wrap: wrap; font-size: 14px; }
+header .spacer { flex: 1; }
+button, select { background: #2a2a2a; color: #eee; border: 1px solid #444; border-radius: 4px; padding: 5px 10px; cursor: pointer; }
+button:hover { background: #3a3a3a; }
+button.active { background: #2d6cdf; border-color: #2d6cdf; }
+.check { display: flex; align-items: center; gap: 4px; }
+#timer { font-variant-numeric: tabular-nums; font-size: 18px; }
+main { flex: 1; display: flex; min-height: 0; }
+#preview { flex: 3; background: #000; display: flex; align-items: center; justify-content: center; position: relative; }
+#video { max-width: 100%; max-height: 100%; }
+#status { position: absolute; bottom: 8px; left: 8px; right: 8px; text-align: center; color: #ccc; background: rgba(0,0,0,.6); margin: 0; padding: 4px; }
+#status:empty { display: none; }
+#notes { flex: 2; padding: 24px 32px; overflow-y: auto; font-size: 28px; line-height: 1.5; }
+#notes h1, #notes h2, #notes h3 { margin: 0 0 16px; color: #7cb7ff; }
+#notes ul, #notes ol { padding-left: 1.2em; }
+#notes code { background: #2a2a2a; padding: 1px 6px; border-radius: 4px; font-family: Consolas, monospace; }
+#notes pre { background: #1c1c1c; padding: 12px; border-radius: 6px; overflow-x: auto; }
+#notes pre code { padding: 0; background: none; }

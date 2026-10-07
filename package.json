@@ -1,0 +1,13 @@
+{
+  "name": "presenter-notes",
+  "version": "0.1.0",
+  "description": "Live preview of the big screen plus speaker notes, for people presenting code.",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron ."
+  },
+  "license": "MIT",
+  "devDependencies": {
+    "electron": "^33.0.0"
+  }
+}
