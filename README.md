@@ -1,100 +1,100 @@
-# Notas do Apresentador
+# Presenter Notes
 
-Aplicação de ambiente de trabalho para quem **apresenta código ao vivo** numa tela grande. No ecrã do teu PC vês, lado a lado, uma **pré-visualização em direto da tela grande** (com o rato) e as **tuas notas** do que tens de dizer. O público só vê o código.
+Desktop app for people who **present code live** on a big screen. On your own PC screen you see, side by side, a **live preview of the big screen** (including the mouse cursor) and **your speaker notes**. The audience only sees the code.
 
-> 🚧 **Projeto em desenvolvimento.** Este README descreve o objetivo, o desenho da solução e o plano. Ainda não existe uma versão utilizável.
+> 🚧 **Work in progress.** This README describes the goal, the design and the plan. There is no usable version yet.
 
-## O problema
+## The problem
 
-Quando mostras um projeto (por exemplo, o VS Code) numa tela grande ligada ao PC por HDMI, tens duas opções do Windows, e nenhuma serve bem:
+When you show a project (for example, VS Code) on a big screen connected to your PC by HDMI, Windows gives you two options, and neither works well:
 
-| Modo | O que acontece | Problema |
+| Mode | What happens | Problem |
 |---|---|---|
-| **Duplicar** | A tela mostra exatamente o que está no ecrã do PC | Qualquer janela de notas também aparece na tela |
-| **Expandir** | A tela é um segundo ecrã, só com o que lá puseres | Não vês o que estás a mostrar nem o rato sem olhar para trás |
+| **Duplicate** | The big screen shows exactly what is on your PC screen | Any notes window also shows up on the big screen |
+| **Extend** | The big screen is a second display with only what you put on it | You can't see what you're showing, or the mouse, without turning around |
 
-Quem apresenta (numa defesa, numa aula, numa demo) acaba por ter as notas noutro dispositivo, ou por andar a virar-se para a tela.
+People who present (in a thesis defense, a class, a demo) end up keeping their notes on another device, or turning around to look at the screen.
 
-## A solução
+## The solution
 
-Usar o modo **Expandir** e uma app que mostra, no ecrã do PC:
+Use **Extend** mode plus an app that shows, on your PC screen:
 
-1. **Pré-visualização em direto** do ecrã da tela grande, com o rato incluído.
-2. **As notas** da apresentação: o que dizer, em que ficheiro estás, o que faz cada função.
+1. A **live preview** of the big screen, cursor included.
+2. **Your notes** for the talk: what to say, which file you're in, what each function does.
 
 ```
-┌──────────── ecrã do PC ────────────┐      ┌──── tela grande ────┐
+┌──────────── PC screen ─────────────┐      ┌──── big screen ─────┐
 │ ┌──────────────────┐ ┌───────────┐ │      │                     │
-│ │ pré-visualização │ │   NOTAS   │ │      │       VS Code       │
-│ │ da tela grande   │ │           │ │      │  (só isto é visto)  │
+│ │   live preview   │ │   NOTES   │ │      │       VS Code       │
+│ │ of the big screen│ │           │ │      │ (only this is seen) │
 │ └──────────────────┘ └───────────┘ │      │                     │
 └────────────────────────────────────┘      └─────────────────────┘
 ```
 
-Como a app está no ecrã do PC e captura o **outro** monitor, não há efeito de espelho infinito. O público vê só o VS Code e tu vês tudo sem olhar para trás.
+Because the app runs on your PC screen and captures the **other** display, there is no infinite-mirror effect. The audience sees only VS Code, and you see everything without turning around.
 
-## Como vai ser usado
+## How it will be used
 
-1. Ligar o cabo HDMI e carregar em `Win + P` → **Expandir**.
-2. Arrastar o VS Code para a tela grande.
-3. Abrir a app no ecrã do PC e escolher o monitor da tela grande.
-4. Apresentar: mexes o rato e trabalhas na tela grande, vês o resultado na pré-visualização e lês as notas ao lado.
+1. Plug in the HDMI cable and press `Win + P` → **Extend**.
+2. Drag VS Code onto the big screen.
+3. Open the app on your PC screen and pick the display of the big screen.
+4. Present: you move the mouse and work on the big screen, see the result in the preview and read your notes next to it.
 
-## Funcionalidades planeadas
+## Planned features
 
-- Pré-visualização em direto de um segundo monitor.
-- Notas lidas de um ficheiro Markdown, organizadas por tópico, ficheiro ou secção do código.
-- Atalhos de teclado para mudar de nota sem sair do VS Code.
-- Modo escuro e letra grande, para ler à distância.
-- Janela sempre por cima.
-- Cronómetro da apresentação.
-- Modo teleprompter com scroll automático.
-- Opção de esconder a janela nas partilhas de ecrã (Teams, Meet, Zoom).
+- Live preview of a second display.
+- Notes read from a Markdown file, organized by topic, file or section of the code.
+- Keyboard shortcuts to switch notes without leaving VS Code.
+- Dark mode and large text, readable from a distance.
+- Always-on-top window.
+- Presentation timer.
+- Teleprompter mode with auto-scroll.
+- Option to hide the window from screen sharing (Teams, Meet, Zoom).
 
-## Como funciona por dentro
+## How it works under the hood
 
-- **Electron** (JavaScript, HTML e CSS).
-- **Processo principal**: cria a janela, regista os atalhos e usa o `desktopCapturer` para obter o monitor escolhido.
-- **Interface**: mostra o vídeo capturado num elemento `<video>` e as notas ao lado.
-- **Partilhas de ecrã**: `win.setContentProtection(true)` pede ao sistema para excluir a janela da captura. No Windows usa o `SetWindowDisplayAffinity`.
+- **Electron** (JavaScript, HTML and CSS).
+- **Main process**: creates the window, registers the shortcuts and uses `desktopCapturer` to get the chosen display.
+- **UI**: shows the captured video in a `<video>` element, with the notes next to it.
+- **Screen sharing**: `win.setContentProtection(true)` asks the operating system to exclude the window from capture. On Windows it uses `SetWindowDisplayAffinity`.
 
-## Limitações e pontos a validar
+## Limitations and things to validate
 
-- **Duplicar ecrã não esconde nada.** O `setContentProtection` protege contra apps de captura (Teams, Meet, Zoom, OBS), mas não contra o HDMI em modo duplicar. Por isso a solução depende do modo **Expandir**.
-- **Rato na pré-visualização:** é preciso confirmar que o cursor aparece na captura em todas as versões e sistemas.
-- **Atraso:** a pré-visualização tem um pequeno atraso em relação ao ecrã real. Falta medir se é aceitável numa apresentação.
-- **macOS:** a proteção contra captura pode ser contornada por algumas apps de videochamada, dependendo das definições. O foco inicial é o Windows.
+- **Duplicate mode hides nothing.** `setContentProtection` protects against capture apps (Teams, Meet, Zoom, OBS), but not against HDMI in duplicate mode. That is why the solution relies on **Extend** mode.
+- **Cursor in the preview:** it still needs to be confirmed that the cursor shows up in the capture on all versions and systems.
+- **Latency:** the preview lags slightly behind the real screen. It still has to be measured to see if it is acceptable in a talk.
+- **macOS:** some video-call apps can bypass the capture protection, depending on their settings. The initial focus is Windows.
 
 ## Roadmap
 
-- [ ] Janela Electron básica
-- [ ] Mostrar as notas (modo escuro, letra grande)
-- [ ] Ler as notas de um ficheiro `.md`
-- [ ] Atalhos de teclado (nota seguinte e anterior)
-- [ ] Pré-visualização em direto do segundo monitor
-- [ ] Janela sempre por cima e `setContentProtection`
-- [ ] Cronómetro e modo teleprompter
+- [ ] Basic Electron window
+- [ ] Show the notes (dark mode, large text)
+- [ ] Read the notes from a `.md` file
+- [ ] Keyboard shortcuts (next and previous note)
+- [ ] Live preview of the second display
+- [ ] Always-on-top window and `setContentProtection`
+- [ ] Timer and teleprompter mode
 
-## Projetos semelhantes
+## Similar projects
 
-Já existem projetos que resolvem uma parte do problema:
+Some existing projects solve part of the problem:
 
-| Projeto | Tecnologia | Licença | O que faz |
+| Project | Tech | License | What it does |
 |---|---|---|---|
-| [CueCard](https://github.com/thisisnsh/cuecard) | Tauri | MIT | Teleprompter invisível para partilhas de ecrã, com integração com o Google Slides |
-| [Stealth Notes](https://github.com/heyadrsh/note) | Electron | MIT | Notas em Markdown numa janela excluída da captura de ecrã |
-| [RPrez](https://github.com/nebrius/rprez) | Electron | GPL-3.0 | Software de apresentações com vista de apresentador e vistas atribuídas a monitores diferentes |
+| [CueCard](https://github.com/thisisnsh/cuecard) | Tauri | MIT | Invisible teleprompter for screen sharing, with Google Slides integration |
+| [Stealth Notes](https://github.com/heyadrsh/note) | Electron | MIT | Markdown notes in a window excluded from screen capture |
+| [RPrez](https://github.com/nebrius/rprez) | Electron | GPL-3.0 | Presentation software with a presenter view and views assigned to different monitors |
 
-**O que este projeto acrescenta:** nos projetos que encontrei, nenhum mostra uma pré-visualização em direto do monitor do público ao lado das notas, pensada para quem apresenta **código** num HDMI.
+**What this project adds:** among the projects I found, none shows a live preview of the audience's display next to the notes, aimed at people presenting **code** over HDMI.
 
-## Requisitos previstos
+## Planned requirements
 
-- Node.js e npm
-- Windows com dois ecrãs, em modo Expandir
+- Node.js and npm
+- Windows with two displays, in Extend mode
 
-## Como correr
+## Running
 
-Ainda não disponível. Quando existir:
+Not available yet. Once it exists:
 
 ```bash
 npm install
