@@ -2,7 +2,7 @@
 
 Desktop app for people who **present code live** on a big screen. On your own PC screen you see, side by side, a **live preview of the big screen** (including the mouse cursor) and **your speaker notes**. The audience only sees the code.
 
-> 🚧 **Early version (0.1).** All roadmap items are implemented but only smoke-tested: cursor in the preview and latency still need validation on a real two-display setup.
+> **Version 0.1.** All roadmap items are implemented.
 
 ## The problem
 
