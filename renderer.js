@@ -128,6 +128,10 @@ document.addEventListener('keydown', e => {
   else if (e.key === 'Home') goTo(0)
   else if (e.key === 'End') goTo(sections.length - 1)
   else if (/^[1-9]$/.test(e.key)) goTo(Number(e.key) - 1)
+  else if (e.key === 'ArrowDown') notesEl.scrollBy(0, notesEl.clientHeight / 4)
+  else if (e.key === 'ArrowUp') notesEl.scrollBy(0, -notesEl.clientHeight / 4)
+  else if (e.key === 'PageDown') notesEl.scrollBy(0, notesEl.clientHeight * 0.9)
+  else if (e.key === 'PageUp') notesEl.scrollBy(0, -notesEl.clientHeight * 0.9)
 })
 
 applyFont()
