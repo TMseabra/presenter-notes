@@ -69,15 +69,16 @@ function splitSections(md) {
   return parts.filter(p => p.trim())
 }
 
-function setNotes(md) {
+function setNotes(md, keepPosition) {
   sections = splitSections(md)
-  current = 0
-  showNote()
+  current = keepPosition ? Math.min(current, Math.max(0, sections.length - 1)) : 0
+  showNote(keepPosition)
 }
 
-function showNote() {
+function showNote(keepScroll) {
+  const top = notesEl.scrollTop
   notesEl.innerHTML = sections.length ? renderMarkdown(sections[current]) : '<p>No notes loaded.</p>'
-  notesEl.scrollTop = 0
+  notesEl.scrollTop = keepScroll ? top : 0
   $('counter').textContent = `${sections.length ? current + 1 : 0}/${sections.length}`
 }
 
@@ -93,10 +94,13 @@ async function startPreview(sourceId) {
   if (video.srcObject) video.srcObject.getTracks().forEach(t => t.stop())
   $('status').textContent = ''
   try {
-    video.srcObject = await navigator.mediaDevices.getUserMedia({
+    const stream = await navigator.mediaDevices.getUserMedia({
       audio: false,
       video: { mandatory: { chromeMediaSource: 'desktop', chromeMediaSourceId: sourceId, maxFrameRate: 30 } }
     })
+    video.srcObject = stream
+    // The capture ends when the display is unplugged; say so instead of freezing on the last frame.
+    stream.getVideoTracks()[0].onended = () => { $('status').textContent = 'Display disconnected. Reconnect it and press Refresh.' }
   } catch (err) {
     $('status').textContent = `Could not capture the display: ${err.message}`
   }
@@ -105,11 +109,13 @@ async function startPreview(sourceId) {
 async function loadDisplays() {
   const displays = await window.api.listDisplays()
   const select = $('display')
+  const previous = select.value
   select.innerHTML = ''
   displays.forEach(d => select.add(new Option(d.label, d.sourceId)))
   // Prefer a display that is not the PC screen.
   const other = displays.find(d => !d.isPrimary) || displays[0]
-  if (other) { select.value = other.sourceId; startPreview(other.sourceId) }
+  const keep = displays.find(d => d.sourceId === previous) && displays.length > 1 ? previous : other && other.sourceId
+  if (keep) { select.value = keep; startPreview(keep) }
   if (displays.length < 2) $('status').textContent = 'Only one display found. Use Win + P and pick Extend.'
 }
 
@@ -150,11 +156,15 @@ $('hide').onchange = e => window.api.setContentProtection(e.target.checked)
 $('font-').onclick = () => { fontSize = Math.max(12, fontSize - 2); applyFont() }
 $('font+').onclick = () => { fontSize = Math.min(96, fontSize + 2); applyFont() }
 
+$('refresh').onclick = loadDisplays
+window.api.onDisplaysChanged(loadDisplays)
+window.api.onNotesChanged(md => setNotes(md, true))
 window.api.onNext(() => go(1))
 window.api.onPrev(() => go(-1))
 window.api.onTeleprompter(toggleTeleprompter)
 
 document.addEventListener('keydown', e => {
+  if (e.target.tagName === 'SELECT' || e.target.tagName === 'INPUT') return // arrows belong to the control
   if (e.key === 'ArrowRight') go(1)
   else if (e.key === 'ArrowLeft') go(-1)
 })

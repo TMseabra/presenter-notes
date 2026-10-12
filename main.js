@@ -3,6 +3,7 @@ const fs = require('fs')
 const path = require('path')
 
 let win
+let watcher = null
 
 function createWindow() {
   win = new BrowserWindow({
@@ -45,6 +46,21 @@ ipcMain.handle('displays:list', async () => {
     .filter(d => d.sourceId)
 })
 
+function watchNotes(filePath) {
+  if (watcher) watcher.close()
+  let timer
+  watcher = fs.watch(filePath, () => {
+    // Editors fire several events per save; debounce and re-read.
+    clearTimeout(timer)
+    timer = setTimeout(() => {
+      try {
+        if (win && !win.isDestroyed()) win.webContents.send('notes:changed', fs.readFileSync(filePath, 'utf8'))
+      } catch {}
+    }, 150)
+  })
+  watcher.on('error', () => {})
+}
+
 ipcMain.handle('notes:open', async () => {
   const res = await dialog.showOpenDialog(win, {
     filters: [{ name: 'Markdown', extensions: ['md', 'markdown', 'txt'] }],
@@ -52,11 +68,13 @@ ipcMain.handle('notes:open', async () => {
   })
   if (res.canceled || !res.filePaths[0]) return null
   const filePath = res.filePaths[0]
+  watchNotes(filePath)
   return { filePath, content: fs.readFileSync(filePath, 'utf8') }
 })
 
 ipcMain.handle('notes:default', async () => {
   const filePath = path.join(__dirname, 'notes.md')
+  watchNotes(filePath)
   return { filePath, content: fs.readFileSync(filePath, 'utf8') }
 })
 
@@ -66,6 +84,9 @@ ipcMain.on('window:content-protection', (_e, on) => win.setContentProtection(!!o
 app.whenReady().then(() => {
   createWindow()
   registerShortcuts()
+  const notifyDisplays = () => send('displays:changed')
+  screen.on('display-added', notifyDisplays)
+  screen.on('display-removed', notifyDisplays)
 })
 
 app.on('will-quit', () => globalShortcut.unregisterAll())

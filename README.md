@@ -101,7 +101,7 @@ npm start
 
 If you start it from a terminal that sets `ELECTRON_RUN_AS_NODE` (for example VS Code's), unset it first.
 
-Notes are split into one note per `## ` heading; see `notes.md` for an example.
+Notes are split into one note per `## ` heading; see `notes.md` for an example. The notes file is reloaded automatically when you save it, and the display list refreshes when a monitor is plugged in or removed.
 
 | Shortcut | Action |
 |---|---|
