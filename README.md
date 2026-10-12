@@ -134,3 +134,9 @@ npm test
 ```
 
 Runs the unit tests for the markdown parser. The Electron window itself was checked by hand and with a throwaway script, not with a committed test.
+
+## Plain text and pasted text
+
+- A `.txt` file is shown whole and static, with its original spacing (no sections, no markdown), so you can just scroll and read.
+- **Paste text** in the header opens an editor: paste or type anything, press **Done**, and it is shown the same way. It is remembered for the next run.
+- Plain text has its own small size (default 14 px). Change it with **A-** / **A+** or **Ctrl + mouse wheel**.

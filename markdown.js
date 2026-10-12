@@ -72,5 +72,12 @@ function sectionTitle(section) {
   return line.replace(/^#+\s*/, '').trim() || '(empty)'
 }
 
+// Plain .txt files are shown as-is: no markdown, original spacing and line breaks kept.
+function renderPlain(text) {
+  return `<pre class="plain">${escapeHtml(text)}</pre>`
+}
+
+const isPlainFile = name => /\.txt$/i.test(name || '')
+
 // Loaded as a plain script in the window and as a module in the tests.
-if (typeof module !== 'undefined') module.exports = { escapeHtml, inline, renderMarkdown, splitSections, sectionTitle }
+if (typeof module !== 'undefined') module.exports = { escapeHtml, inline, renderMarkdown, splitSections, sectionTitle, renderPlain, isPlainFile }

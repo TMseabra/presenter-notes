@@ -1,6 +1,6 @@
 const test = require('node:test')
 const assert = require('node:assert')
-const { renderMarkdown, splitSections, sectionTitle, inline } = require('../markdown.js')
+const { renderMarkdown, splitSections, sectionTitle, inline, renderPlain, isPlainFile } = require('../markdown.js')
 
 test('inline formatting', () => {
   assert.strictEqual(inline('a **b** `c` *d*'), 'a <strong>b</strong> <code>c</code> <em>d</em>')
@@ -43,4 +43,15 @@ test('sectionTitle uses the heading text', () => {
   assert.strictEqual(sectionTitle('## File: main.js\n- x'), 'File: main.js')
   assert.strictEqual(sectionTitle('\n\nplain line'), 'plain line')
   assert.strictEqual(sectionTitle(''), '(empty)')
+})
+
+test('renderPlain keeps text as-is and escapes html', () => {
+  const html = renderPlain('  <div>\n    x')
+  assert.strictEqual(html, '<pre class="plain">  &lt;div&gt;\n    x</pre>')
+})
+
+test('isPlainFile only matches .txt', () => {
+  assert.ok(isPlainFile('folder/b.TXT'))
+  assert.ok(!isPlainFile('talk.md'))
+  assert.ok(!isPlainFile(undefined))
 })

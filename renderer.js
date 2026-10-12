@@ -11,18 +11,26 @@ function saveSettings() { try { localStorage.setItem('settings', JSON.stringify(
 
 let fontSize = settings.fontSize || 28
 
-function setNotes(md, keepPosition) {
-  sections = splitSections(md)
+// A .txt file is shown whole and static (one "note", original formatting); .md files are split per "## ".
+let plainMode = false
+let rawText = '' // the text currently shown, so the editor can start from it
+let plainSize = settings.plainSize || 14 // plain text has its own, smaller, size
+
+function setNotes(md, keepPosition, fileName) {
+  rawText = md
+  if (fileName !== undefined) { plainMode = isPlainFile(fileName); applyFont() }
+  sections = plainMode ? (md.trim() ? [md] : []) : splitSections(md)
   const outline = $('outline')
   outline.innerHTML = ''
-  sections.forEach((s, i) => outline.add(new Option(`${i + 1}. ${sectionTitle(s)}`, String(i))))
+  sections.forEach((s, i) => outline.add(new Option(`${i + 1}. ${plainMode ? 'Full text' : sectionTitle(s)}`, String(i))))
   current = keepPosition ? Math.min(current, Math.max(0, sections.length - 1)) : 0
   showNote(keepPosition)
 }
 
 function showNote(keepScroll) {
   const top = notesEl.scrollTop
-  notesEl.innerHTML = sections.length ? renderMarkdown(sections[current]) : '<p>No notes loaded.</p>'
+  const render = plainMode ? renderPlain : renderMarkdown
+  notesEl.innerHTML = sections.length ? render(sections[current]) : '<p>No notes loaded.</p>'
   notesEl.scrollTop = keepScroll ? top : 0
   $('counter').textContent = `${sections.length ? current + 1 : 0}/${sections.length}`
   $('outline').value = String(current)
@@ -30,7 +38,9 @@ function showNote(keepScroll) {
 
 function goTo(index) {
   if (!sections.length) return
-  current = Math.min(sections.length - 1, Math.max(0, index))
+  const target = Math.min(sections.length - 1, Math.max(0, index))
+  if (target === current) return // already there: keep the reading position
+  current = target
   showNote()
 }
 
@@ -110,10 +120,46 @@ $('timer-reset').onclick = () => { elapsed = 0; renderTimer() }
 // ---------- Wiring ----------
 
 function applyFont() {
-  notesEl.style.fontSize = fontSize + 'px'
+  notesEl.style.fontSize = (plainMode ? plainSize : fontSize) + 'px'
+  $('editor').style.fontSize = plainSize + 'px'
   settings.fontSize = fontSize
+  settings.plainSize = plainSize
   saveSettings()
 }
+
+function changeFont(delta) {
+  if (plainMode) plainSize = Math.min(48, Math.max(8, plainSize + delta))
+  else fontSize = Math.min(96, Math.max(12, fontSize + delta * 2))
+  applyFont()
+}
+
+// Ctrl + mouse wheel zooms the text.
+notesEl.addEventListener('wheel', e => {
+  if (!e.ctrlKey) return
+  e.preventDefault()
+  changeFont(e.deltaY < 0 ? 1 : -1)
+}, { passive: false })
+
+// "Paste text": type or paste your own text; it is shown as plain static text and remembered.
+const editor = $('editor')
+function toggleEditor() {
+  if (editor.hidden) {
+    editor.value = rawText
+    editor.hidden = false
+    notesEl.hidden = true
+    $('edit').textContent = 'Done'
+    editor.focus()
+  } else {
+    editor.hidden = true
+    notesEl.hidden = false
+    $('edit').textContent = 'Paste text'
+    settings.pasted = editor.value
+    saveSettings()
+    setNotes(editor.value, false, 'pasted.txt')
+  }
+}
+$('edit').onclick = toggleEditor
+function forgetPasted() { delete settings.pasted; saveSettings() }
 
 function toggleTheme() {
   document.body.classList.toggle('light')
@@ -150,22 +196,22 @@ for (const [id, key, apply] of [['ontop', 'ontop', window.api.setAlwaysOnTop], [
 }
 
 $('display').onchange = e => startPreview(e.target.value)
-$('open').onclick = async () => { const r = await window.api.openNotes(); if (r) setNotes(r.content) }
+$('open').onclick = async () => { const r = await window.api.openNotes(); if (r) { forgetPasted(); setNotes(r.content, false, r.filePath) } }
 $('outline').onchange = e => { current = Number(e.target.value); showNote(); e.target.blur() }
 $('prev').onclick = () => go(-1)
 $('next').onclick = () => go(1)
 $('tele').onclick = toggleTeleprompter
 $('ontop').onchange = e => { window.api.setAlwaysOnTop(e.target.checked); settings.ontop = e.target.checked; saveSettings() }
 $('hide').onchange = e => { window.api.setContentProtection(e.target.checked); settings.hide = e.target.checked; saveSettings() }
-$('font-').onclick = () => { fontSize = Math.max(12, fontSize - 2); applyFont() }
-$('font+').onclick = () => { fontSize = Math.min(96, fontSize + 2); applyFont() }
+$('font-').onclick = () => changeFont(-1)
+$('font+').onclick = () => changeFont(1)
 
 // Drop a .md/.txt file anywhere on the window to load it as the notes.
 document.addEventListener('dragover', e => e.preventDefault())
 document.addEventListener('drop', async e => {
   e.preventDefault()
   const file = [...e.dataTransfer.files].find(f => /\.(md|markdown|txt)$/i.test(f.name))
-  if (file) setNotes(await file.text())
+  if (file) { forgetPasted(); setNotes(await file.text(), false, file.name) }
 })
 
 $('refresh').onclick = loadDisplays
@@ -176,7 +222,7 @@ window.api.onPrev(() => go(-1))
 window.api.onTeleprompter(toggleTeleprompter)
 
 document.addEventListener('keydown', e => {
-  if (e.target.tagName === 'SELECT' || e.target.tagName === 'INPUT') return // arrows belong to the control
+  if (['SELECT', 'INPUT', 'TEXTAREA'].includes(e.target.tagName)) return // arrows belong to the control
   if (e.key === 'ArrowRight') go(1)
   else if (e.key === 'ArrowLeft') go(-1)
   else if (e.key === 'Home') goTo(0)
@@ -196,4 +242,5 @@ document.addEventListener('keydown', e => {
 applyFont()
 renderTeleLabel()
 loadDisplays()
-window.api.defaultNotes().then(r => setNotes(r.content))
+if (settings.pasted) setNotes(settings.pasted, false, 'pasted.txt')
+else window.api.defaultNotes().then(r => setNotes(r.content, false, r.filePath))

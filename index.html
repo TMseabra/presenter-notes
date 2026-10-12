@@ -11,6 +11,7 @@
     <label>Big screen <select id="display"></select></label>
     <button id="refresh" title="Re-detect displays">⟳</button>
     <select id="outline" title="Jump to a note"></select>
+    <button id="edit" title="Paste or type your own text">Paste text</button>
     <button id="open">Open notes…</button>
     <button id="prev" title="Ctrl+Alt+Left">◀</button>
     <span id="counter">0/0</span>
@@ -32,6 +33,7 @@
   <main>
     <section id="preview"><video id="video" autoplay muted></video><p id="status"></p></section>
     <section id="notes"></section>
+    <textarea id="editor" hidden spellcheck="false" placeholder="Paste or type your text here, then press Done."></textarea>
   </main>
   <script src="markdown.js"></script>
   <script src="renderer.js"></script>

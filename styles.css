@@ -38,3 +38,10 @@ body.only-notes #preview { display: none; }
 body.only-preview #notes { display: none; }
 body.only-preview #preview { flex: 1; }
 body.only-notes #notes { flex: 1; }
+#notes pre.plain { background: none; padding: 0; margin: 0; border-radius: 0; font-family: Consolas, monospace; font-size: 0.5em; line-height: 1.45; white-space: pre; overflow-x: auto; }
+[hidden] { display: none !important; }
+#editor { flex: 2; resize: none; border: 0; outline: 0; padding: 24px 32px; background: #161616; color: #eee; font-family: Consolas, monospace; line-height: 1.45; white-space: pre; overflow: auto; }
+body.light #editor { background: #fff; color: #1a1a1a; }
+body.only-preview #editor { display: none; }
+body.only-notes #editor { flex: 1; }
+#notes pre.plain { font-size: 1em; }
