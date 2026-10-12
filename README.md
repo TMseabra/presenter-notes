@@ -107,3 +107,30 @@ Notes are split into one note per `## ` heading; see `notes.md` for an example. 
 |---|---|
 | `Ctrl+Alt+Right` / `Ctrl+Alt+Left` | Next / previous note (global) |
 | `Ctrl+Alt+Space` | Start / stop teleprompter (global) |
+
+These work when the app window is focused:
+
+| Key | Action |
+|---|---|
+| `Right` / `Left` | Next / previous note |
+| `Home` / `End` / `1`-`9` | First / last / nth note |
+| `Up` / `Down` / `PageUp` / `PageDown` | Scroll the current note |
+| `[` / `]` | Slower / faster teleprompter |
+| `P` | Freeze / resume the preview |
+| `N` | Layout: both, notes only, preview only |
+| `T` | Light / dark theme |
+
+Other things worth knowing:
+
+- Open a file from the command line: `npm start -- my-talk.md`, or drop a `.md` file on the window.
+- The outline dropdown jumps to any note.
+- Set the talk length in minutes next to the timer; it turns red once you go over.
+- Font size, theme, layout, window position and the window options are remembered.
+
+## Tests
+
+```bash
+npm test
+```
+
+Runs the unit tests for the markdown parser. The Electron window itself was checked by hand and with a throwaway script, not with a committed test.
