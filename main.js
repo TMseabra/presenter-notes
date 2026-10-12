@@ -106,6 +106,12 @@ function notesFromArgs(argv) {
   return arg ? path.resolve(arg) : null
 }
 
+// The bundled sample, whose first note lists the controls (the Help button).
+ipcMain.handle('notes:sample', async () => {
+  const filePath = path.join(__dirname, 'notes.md')
+  return { filePath, content: fs.readFileSync(filePath, 'utf8') }
+})
+
 ipcMain.handle('notes:default', async () => {
   const filePath = notesFromArgs(process.argv) || path.join(__dirname, 'notes.md')
   watchNotes(filePath)

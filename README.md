@@ -125,6 +125,7 @@ These work when the app window is focused:
 
 Other things worth knowing:
 
+- The **Help** button shows the controls (the first note of the bundled `notes.md`).
 - Drag the divider between the preview and the notes to resize them; double-click it to reset. The size is remembered.
 - Open a file from the command line: `npm start -- my-talk.md`, or drop a `.md` file on the window.
 - The outline dropdown jumps to any note.

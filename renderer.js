@@ -240,6 +240,7 @@ $('layout').onclick = cycleLayout
 // Clean view hides the toolbar and the side panels, leaving only the live preview.
 function toggleClean() { document.body.classList.toggle('clean') }
 $('clean').onclick = toggleClean
+$('help').onclick = async () => { const r = await window.api.sampleNotes(); setNotes(r.content, false, r.filePath); setMode('notes') }
 $('preview').ondblclick = toggleClean // quick way back out
 window.api.onCleanToggle(toggleClean)
 
