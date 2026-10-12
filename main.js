@@ -72,8 +72,14 @@ ipcMain.handle('notes:open', async () => {
   return { filePath, content: fs.readFileSync(filePath, 'utf8') }
 })
 
+// `npm start -- my-talk.md` opens that file instead of the bundled sample.
+function notesFromArgs(argv) {
+  const arg = argv.slice(1).find(a => /\.(md|markdown|txt)$/i.test(a) && fs.existsSync(a))
+  return arg ? path.resolve(arg) : null
+}
+
 ipcMain.handle('notes:default', async () => {
-  const filePath = path.join(__dirname, 'notes.md')
+  const filePath = notesFromArgs(process.argv) || path.join(__dirname, 'notes.md')
   watchNotes(filePath)
   return { filePath, content: fs.readFileSync(filePath, 'utf8') }
 })
