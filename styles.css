@@ -40,8 +40,18 @@ body.only-preview #preview { flex: 1; }
 body.only-notes #notes { flex: 1; }
 #notes pre.plain { background: none; padding: 0; margin: 0; border-radius: 0; font-family: Consolas, monospace; font-size: 0.5em; line-height: 1.45; white-space: pre; overflow-x: auto; }
 [hidden] { display: none !important; }
-#editor { flex: 2; resize: none; border: 0; outline: 0; padding: 24px 32px; background: #161616; color: #eee; font-family: Consolas, monospace; line-height: 1.45; white-space: pre; overflow: auto; }
-body.light #editor { background: #fff; color: #1a1a1a; }
-body.only-preview #editor { display: none; }
-body.only-notes #editor { flex: 1; }
 #notes pre.plain { font-size: 1em; }
+#pad { flex: 2; display: flex; flex-direction: column; min-width: 0; background: #161616; }
+#padbar { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; padding: 6px 10px; background: #1c1c1c; border-bottom: 1px solid #333; font-size: 13px; }
+#padbar .sep { width: 1px; height: 20px; background: #444; margin: 0 4px; }
+#padbar .lbl { color: #999; }
+#padbar button { padding: 3px 9px; }
+#padbar .swatch { width: 22px; height: 22px; padding: 0; border-radius: 50%; }
+#padbar input[type=color] { width: 30px; height: 24px; padding: 0; border: 1px solid #555; background: none; cursor: pointer; }
+#padsize { min-width: 24px; text-align: center; }
+#padtext { flex: 1; overflow: auto; padding: 16px 24px; outline: 0; white-space: pre-wrap; word-wrap: break-word; line-height: 1.5; font-family: 'Segoe UI', sans-serif; font-size: 16px; }
+#padtext:empty::before { content: attr(data-placeholder); color: #777; }
+body.light #pad { background: #fff; }
+body.light #padbar { background: #e6e6e6; border-bottom-color: #ccc; }
+body.only-preview #pad { display: none; }
+body.only-notes #pad { flex: 1; }

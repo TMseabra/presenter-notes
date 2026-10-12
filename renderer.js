@@ -1,7 +1,9 @@
 const $ = id => document.getElementById(id)
 const video = $('video')
 const notesEl = $('notes')
+const pad = $('padtext')
 
+let mode = 'pad' // 'pad' | 'notes'
 let sections = []
 let current = 0
 
@@ -15,6 +17,7 @@ let fontSize = settings.fontSize || 28
 let plainMode = false
 let rawText = '' // the text currently shown, so the editor can start from it
 let plainSize = settings.plainSize || 14 // plain text has its own, smaller, size
+let padSize = settings.padSize || 16
 
 function setNotes(md, keepPosition, fileName) {
   rawText = md
@@ -88,7 +91,7 @@ function renderTeleLabel() { $('tele').textContent = `Teleprompter x${teleSpeed}
 
 function toggleTeleprompter() {
   if (teleTimer) { clearInterval(teleTimer); teleTimer = null }
-  else teleTimer = setInterval(() => { notesEl.scrollTop += teleSpeed }, 30)
+  else teleTimer = setInterval(() => { scroller().scrollTop += teleSpeed }, 30)
   $('tele').classList.toggle('active', !!teleTimer)
 }
 
@@ -121,45 +124,92 @@ $('timer-reset').onclick = () => { elapsed = 0; renderTimer() }
 
 function applyFont() {
   notesEl.style.fontSize = (plainMode ? plainSize : fontSize) + 'px'
-  $('editor').style.fontSize = plainSize + 'px'
+  pad.style.fontSize = padSize + 'px'
+  $('padsize').textContent = padSize
   settings.fontSize = fontSize
   settings.plainSize = plainSize
+  settings.padSize = padSize
   saveSettings()
 }
 
+// The A-/A+ buttons, Ctrl+wheel and the pad toolbar all resize whatever is on screen.
 function changeFont(delta) {
-  if (plainMode) plainSize = Math.min(48, Math.max(8, plainSize + delta))
+  if (mode === 'pad') padSize = Math.min(48, Math.max(8, padSize + delta))
+  else if (plainMode) plainSize = Math.min(48, Math.max(8, plainSize + delta))
   else fontSize = Math.min(96, Math.max(12, fontSize + delta * 2))
   applyFont()
 }
 
 // Ctrl + mouse wheel zooms the text.
-notesEl.addEventListener('wheel', e => {
-  if (!e.ctrlKey) return
-  e.preventDefault()
-  changeFont(e.deltaY < 0 ? 1 : -1)
-}, { passive: false })
-
-// "Paste text": type or paste your own text; it is shown as plain static text and remembered.
-const editor = $('editor')
-function toggleEditor() {
-  if (editor.hidden) {
-    editor.value = rawText
-    editor.hidden = false
-    notesEl.hidden = true
-    $('edit').textContent = 'Done'
-    editor.focus()
-  } else {
-    editor.hidden = true
-    notesEl.hidden = false
-    $('edit').textContent = 'Paste text'
-    settings.pasted = editor.value
-    saveSettings()
-    setNotes(editor.value, false, 'pasted.txt')
-  }
+for (const el of [notesEl, pad]) {
+  el.addEventListener('wheel', e => {
+    if (!e.ctrlKey) return
+    e.preventDefault()
+    changeFont(e.deltaY < 0 ? 1 : -1)
+  }, { passive: false })
 }
-$('edit').onclick = toggleEditor
-function forgetPasted() { delete settings.pasted; saveSettings() }
+
+// ---------- Notepad (the editable panel) ----------
+
+// Pasting always inserts plain text, so text copied from a web page or Word never brings its own giant font.
+pad.addEventListener('paste', e => {
+  e.preventDefault()
+  document.execCommand('insertText', false, e.clipboardData.getData('text/plain'))
+})
+
+let padSaveTimer = null
+function savePad() {
+  clearTimeout(padSaveTimer)
+  padSaveTimer = setTimeout(() => { try { localStorage.setItem('padHtml', pad.innerHTML) } catch {} }, 300)
+}
+pad.addEventListener('input', savePad)
+
+// Clicking a toolbar control must not lose the selection inside the pad.
+let savedRange = null
+document.addEventListener('selectionchange', () => {
+  const sel = getSelection()
+  if (sel.rangeCount && pad.contains(sel.anchorNode)) savedRange = sel.getRangeAt(0).cloneRange()
+})
+
+function format(cmd, value) {
+  pad.focus()
+  if (savedRange) { const sel = getSelection(); sel.removeAllRanges(); sel.addRange(savedRange) }
+  document.execCommand('styleWithCSS', false, true)
+  document.execCommand(cmd, false, value)
+  savePad()
+}
+
+$('padbar').addEventListener('mousedown', e => { if (e.target.tagName === 'BUTTON') e.preventDefault() })
+for (const b of document.querySelectorAll('#padbar [data-cmd]')) b.onclick = () => format(b.dataset.cmd)
+for (const b of document.querySelectorAll('#padbar [data-fg]')) {
+  b.style.background = b.dataset.fg
+  b.onclick = () => format('foreColor', b.dataset.fg)
+}
+$('fg').oninput = e => format('foreColor', e.target.value)
+$('bg').oninput = e => format('hiliteColor', e.target.value)
+$('nohl').onclick = () => format('hiliteColor', 'transparent')
+$('padreset').onclick = () => format('removeFormat')
+$('padsize-').onclick = () => { if (mode === 'pad') changeFont(-1) }
+$('padsize+').onclick = () => { if (mode === 'pad') changeFont(1) }
+
+// Restore what was typed last time (or the text pasted with the old "Paste text" box).
+try {
+  const saved = localStorage.getItem('padHtml')
+  if (saved) pad.innerHTML = saved
+  else if (settings.pasted) pad.textContent = settings.pasted
+} catch {}
+
+// Two modes share the right-hand side: the notepad (default) and notes loaded from a file.
+function setMode(next) {
+  mode = next
+  pad.parentElement.hidden = mode !== 'pad'
+  notesEl.hidden = mode !== 'notes'
+  $('mode').textContent = mode === 'pad' ? 'Open a notes file' : 'Back to notepad'
+  settings.mode = mode
+  saveSettings()
+}
+const scroller = () => (mode === 'pad' ? pad : notesEl)
+$('mode').onclick = () => setMode(mode === 'pad' ? 'notes' : 'pad')
 
 function toggleTheme() {
   document.body.classList.toggle('light')
@@ -196,7 +246,7 @@ for (const [id, key, apply] of [['ontop', 'ontop', window.api.setAlwaysOnTop], [
 }
 
 $('display').onchange = e => startPreview(e.target.value)
-$('open').onclick = async () => { const r = await window.api.openNotes(); if (r) { forgetPasted(); setNotes(r.content, false, r.filePath) } }
+$('open').onclick = async () => { const r = await window.api.openNotes(); if (r) { setNotes(r.content, false, r.filePath); setMode('notes') } }
 $('outline').onchange = e => { current = Number(e.target.value); showNote(); e.target.blur() }
 $('prev').onclick = () => go(-1)
 $('next').onclick = () => go(1)
@@ -211,7 +261,7 @@ document.addEventListener('dragover', e => e.preventDefault())
 document.addEventListener('drop', async e => {
   e.preventDefault()
   const file = [...e.dataTransfer.files].find(f => /\.(md|markdown|txt)$/i.test(f.name))
-  if (file) { forgetPasted(); setNotes(await file.text(), false, file.name) }
+  if (file) { setNotes(await file.text(), false, file.name); setMode('notes') }
 })
 
 $('refresh').onclick = loadDisplays
@@ -222,7 +272,8 @@ window.api.onPrev(() => go(-1))
 window.api.onTeleprompter(toggleTeleprompter)
 
 document.addEventListener('keydown', e => {
-  if (['SELECT', 'INPUT', 'TEXTAREA'].includes(e.target.tagName)) return // arrows belong to the control
+  // Keys belong to the control being used, and to the notepad while you type in it.
+  if (['SELECT', 'INPUT', 'TEXTAREA'].includes(e.target.tagName) || e.target.isContentEditable) return
   if (e.key === 'ArrowRight') go(1)
   else if (e.key === 'ArrowLeft') go(-1)
   else if (e.key === 'Home') goTo(0)
@@ -233,14 +284,14 @@ document.addEventListener('keydown', e => {
   else if (e.key === 'n' || e.key === 'N') cycleLayout()
   else if (e.key === ']') changeTeleSpeed(1)
   else if (e.key === '[') changeTeleSpeed(-1)
-  else if (e.key === 'ArrowDown') notesEl.scrollBy(0, notesEl.clientHeight / 4)
-  else if (e.key === 'ArrowUp') notesEl.scrollBy(0, -notesEl.clientHeight / 4)
-  else if (e.key === 'PageDown') notesEl.scrollBy(0, notesEl.clientHeight * 0.9)
-  else if (e.key === 'PageUp') notesEl.scrollBy(0, -notesEl.clientHeight * 0.9)
+  else if (e.key === 'ArrowDown') scroller().scrollBy(0, scroller().clientHeight / 4)
+  else if (e.key === 'ArrowUp') scroller().scrollBy(0, -scroller().clientHeight / 4)
+  else if (e.key === 'PageDown') scroller().scrollBy(0, scroller().clientHeight * 0.9)
+  else if (e.key === 'PageUp') scroller().scrollBy(0, -scroller().clientHeight * 0.9)
 })
 
 applyFont()
 renderTeleLabel()
 loadDisplays()
-if (settings.pasted) setNotes(settings.pasted, false, 'pasted.txt')
-else window.api.defaultNotes().then(r => setNotes(r.content, false, r.filePath))
+setMode(settings.mode === 'notes' ? 'notes' : 'pad')
+window.api.defaultNotes().then(r => setNotes(r.content, false, r.filePath))

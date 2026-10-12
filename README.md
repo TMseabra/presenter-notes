@@ -99,7 +99,7 @@ npm install
 npm start
 ```
 
-If you start it from a terminal that sets `ELECTRON_RUN_AS_NODE` (for example VS Code's), unset it first.
+`npm start` also works from the VS Code terminal (it clears `ELECTRON_RUN_AS_NODE` for you).
 
 Notes are split into one note per `## ` heading; see `notes.md` for an example. The notes file is reloaded automatically when you save it, and the display list refreshes when a monitor is plugged in or removed.
 
@@ -135,8 +135,14 @@ npm test
 
 Runs the unit tests for the markdown parser. The Electron window itself was checked by hand and with a throwaway script, not with a committed test.
 
-## Plain text and pasted text
+## Notepad
 
-- A `.txt` file is shown whole and static, with its original spacing (no sections, no markdown), so you can just scroll and read.
-- **Paste text** in the header opens an editor: paste or type anything, press **Done**, and it is shown the same way. It is remembered for the next run.
-- Plain text has its own small size (default 14 px). Change it with **A-** / **A+** or **Ctrl + mouse wheel**.
+The right-hand side opens as a notepad, like Windows Notepad with a bit of formatting:
+
+- Click in it, paste or type. Everything is saved automatically and is there next time.
+- Pasting always inserts plain text, so text copied from a web page or Word never brings its own giant font.
+- Select text and use the toolbar: **B** / *I* / U, text color (swatches or any color), highlight color, **Clear style**.
+- **A-** / **A+** or **Ctrl + mouse wheel** change the text size (default 16 px).
+- **Open a notes file** switches to a `.md` / `.txt` file (or drop one on the window); **Back to notepad** returns.
+- A `.txt` file is shown whole and static; a `.md` file is split into one note per `## ` heading.
+- The one-key shortcuts (`N`, `T`, `P`, digits...) are ignored while you type in the notepad.

@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self'; media-src 'self' blob: mediastream:">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' 'unsafe-inline'; media-src 'self' blob: mediastream:">
   <title>Presenter Notes</title>
   <link rel="stylesheet" href="styles.css">
 </head>
@@ -11,7 +11,7 @@
     <label>Big screen <select id="display"></select></label>
     <button id="refresh" title="Re-detect displays">⟳</button>
     <select id="outline" title="Jump to a note"></select>
-    <button id="edit" title="Paste or type your own text">Paste text</button>
+    <button id="mode" title="Switch between your notepad and a notes file"></button>
     <button id="open">Open notes…</button>
     <button id="prev" title="Ctrl+Alt+Left">◀</button>
     <span id="counter">0/0</span>
@@ -33,7 +33,31 @@
   <main>
     <section id="preview"><video id="video" autoplay muted></video><p id="status"></p></section>
     <section id="notes"></section>
-    <textarea id="editor" hidden spellcheck="false" placeholder="Paste or type your text here, then press Done."></textarea>
+    <section id="pad">
+      <div id="padbar">
+        <button data-cmd="bold" title="Bold"><b>B</b></button>
+        <button data-cmd="italic" title="Italic"><i>I</i></button>
+        <button data-cmd="underline" title="Underline"><u>U</u></button>
+        <span class="sep"></span>
+        <span class="lbl">Text</span>
+        <button class="swatch" data-fg="#ff5c5c" title="Red"></button>
+        <button class="swatch" data-fg="#ffb347" title="Orange"></button>
+        <button class="swatch" data-fg="#ffe14d" title="Yellow"></button>
+        <button class="swatch" data-fg="#5fd068" title="Green"></button>
+        <button class="swatch" data-fg="#4dc3ff" title="Blue"></button>
+        <button class="swatch" data-fg="#c792ea" title="Purple"></button>
+        <input type="color" id="fg" value="#ff5c5c" title="Any text color">
+        <span class="lbl">Highlight</span>
+        <input type="color" id="bg" value="#ffe14d" title="Highlight color">
+        <button id="nohl" title="Remove highlight">none</button>
+        <span class="sep"></span>
+        <button id="padsize-" title="Smaller text">A-</button>
+        <span id="padsize">16</span>
+        <button id="padsize+" title="Larger text">A+</button>
+        <button id="padreset" title="Remove colors and styles from the selection">Clear style</button>
+      </div>
+      <div id="padtext" contenteditable="true" spellcheck="false" data-placeholder="Paste or type your text here. It is saved automatically."></div>
+    </section>
   </main>
   <script src="markdown.js"></script>
   <script src="renderer.js"></script>
