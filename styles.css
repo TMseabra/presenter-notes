@@ -68,3 +68,5 @@ body.only-preview #preview, body.only-notes #notes, body.only-notes #pad { flex:
 /* Clean view: only the live preview, so the window looks like the plain screen. */
 body.clean header, body.clean #notes, body.clean #pad, body.clean #divider, body.clean #status { display: none; }
 body.clean #preview { flex: 1; }
+/* Notes on the left: same DOM, mirrored row. */
+body.notes-left main { flex-direction: row-reverse; }

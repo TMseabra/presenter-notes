@@ -244,6 +244,19 @@ $('help').onclick = async () => { const r = await window.api.sampleNotes(); setN
 $('preview').ondblclick = toggleClean // quick way back out
 window.api.onCleanToggle(toggleClean)
 
+// Which side the notes are on (persisted). Layout is mirrored with CSS, so the code below only needs to know the side.
+const notesOnLeft = () => document.body.classList.contains('notes-left')
+function applySide() {
+  document.body.classList.toggle('notes-left', settings.side === 'left')
+}
+function toggleSide() {
+  settings.side = notesOnLeft() ? 'right' : 'left'
+  saveSettings()
+  applySide()
+}
+$('side').onclick = toggleSide
+applySide()
+
 // Draggable divider between the preview and the notes; double-click resets it.
 const DEFAULT_SPLIT = 60
 function setSplit(percent, save) {
@@ -259,7 +272,9 @@ $('divider').addEventListener('pointerdown', e => {
   divider.classList.add('dragging')
   const move = ev => {
     const rect = main.getBoundingClientRect()
-    setSplit(((ev.clientX - rect.left) / rect.width) * 100, true)
+    // The preview's share, measured from whichever edge it sits on.
+    const fromEdge = notesOnLeft() ? rect.right - ev.clientX : ev.clientX - rect.left
+    setSplit((fromEdge / rect.width) * 100, true)
   }
   const up = () => {
     divider.classList.remove('dragging')
@@ -319,6 +334,7 @@ document.addEventListener('keydown', e => {
   else if (e.key === 't' || e.key === 'T') toggleTheme()
   else if (e.key === 'p' || e.key === 'P') toggleFreeze()
   else if (e.key === 'n' || e.key === 'N') cycleLayout()
+  else if (e.key === 's' || e.key === 'S') toggleSide()
   else if (e.key === 'h' || e.key === 'H' || e.key === 'Escape') { if (e.key !== 'Escape' || document.body.classList.contains('clean')) toggleClean() }
   else if (e.key === ']') changeTeleSpeed(1)
   else if (e.key === '[') changeTeleSpeed(-1)

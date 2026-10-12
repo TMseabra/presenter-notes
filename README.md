@@ -122,6 +122,7 @@ These work when the app window is focused:
 | `P` | Freeze / resume the preview |
 | `N` | Layout: both, notes only, preview only |
 | `H` / `Esc` | Clean view: only the preview, no toolbar or side panels (double-click the preview also toggles it) |
+| `S` | Notes on the left or on the right (remembered) |
 | `T` | Light / dark theme |
 
 Other things worth knowing:

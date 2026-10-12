@@ -12,6 +12,7 @@
 **Com a janela da app em foco**
 - `H` ou `Esc` - Clean view (duplo clique no preview também)
 - `N` - só notas / só preview / os dois
+- `S` - notas à esquerda ou à direita (botão *Notes side*)
 - `P` - congela o preview
 - `T` - tema claro / escuro
 - `[` e `]` - teleprompter mais lento / mais rápido
