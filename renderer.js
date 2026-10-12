@@ -160,6 +160,14 @@ $('hide').onchange = e => { window.api.setContentProtection(e.target.checked); s
 $('font-').onclick = () => { fontSize = Math.max(12, fontSize - 2); applyFont() }
 $('font+').onclick = () => { fontSize = Math.min(96, fontSize + 2); applyFont() }
 
+// Drop a .md/.txt file anywhere on the window to load it as the notes.
+document.addEventListener('dragover', e => e.preventDefault())
+document.addEventListener('drop', async e => {
+  e.preventDefault()
+  const file = [...e.dataTransfer.files].find(f => /\.(md|markdown|txt)$/i.test(f.name))
+  if (file) setNotes(await file.text())
+})
+
 $('refresh').onclick = loadDisplays
 window.api.onDisplaysChanged(loadDisplays)
 window.api.onNotesChanged(md => setNotes(md, true))
