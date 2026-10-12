@@ -68,9 +68,8 @@ function splitSections(md) {
 
 // Short label for a note: its first heading, or its first non-empty line.
 function sectionTitle(section) {
-  const line = section.split(/?
-/).find(l => l.trim()) || ''
-  return line.replace(/^#+s*/, '').trim() || '(empty)'
+  const line = section.split(/\r?\n/).find(l => l.trim()) || ''
+  return line.replace(/^#+\s*/, '').trim() || '(empty)'
 }
 
 // Loaded as a plain script in the window and as a module in the tests.

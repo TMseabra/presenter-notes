@@ -40,10 +40,7 @@ test('a rule is not mistaken for a list item', () => {
 })
 
 test('sectionTitle uses the heading text', () => {
-  assert.strictEqual(sectionTitle('## File: main.js
-- x'), 'File: main.js')
-  assert.strictEqual(sectionTitle('
-
-plain line'), 'plain line')
+  assert.strictEqual(sectionTitle('## File: main.js\n- x'), 'File: main.js')
+  assert.strictEqual(sectionTitle('\n\nplain line'), 'plain line')
   assert.strictEqual(sectionTitle(''), '(empty)')
 })
