@@ -21,11 +21,11 @@
     <label class="check"><input type="checkbox" id="hide"> Hide from screen sharing</label>
     <span class="spacer"></span>
     <button id="help" title="Show the controls">Help</button>
-    <button id="clean" title="Hide everything except the preview (H, or Ctrl+Alt+H from anywhere)">Clean view</button>
-    <button id="side" title="Put the notes on the left or on the right (S)">Notes side</button>
-    <button id="layout" title="Notes only / preview only / both (N)">Layout</button>
-    <button id="freeze" title="Freeze / resume the preview (P)">Freeze</button>
-    <button id="theme" title="Light / dark theme (T)">Theme</button>
+    <button id="clean" title="Hide everything except the preview (H, or Ctrl+Alt+H from anywhere)">Clean view (H)</button>
+    <button id="side" title="Put the notes on the left or on the right (S)">Notes side (S)</button>
+    <button id="layout" title="Notes only / preview only / both (N)">Layout (N)</button>
+    <button id="freeze" title="Freeze / resume the preview (P)">Freeze (P)</button>
+    <button id="theme" title="Light / dark theme (T)">Theme (T)</button>
     <button id="font-" title="Smaller text">A−</button>
     <button id="font+" title="Larger text">A+</button>
     <input id="target" type="number" min="0" max="600" placeholder="min" title="Talk length in minutes (timer turns red when exceeded)">
@@ -33,6 +33,20 @@
     <button id="timer-toggle">Start</button>
     <button id="timer-reset">Reset</button>
   </header>
+  <div id="hints">
+    <span class="grp">From anywhere, even in VS Code:</span>
+    <span><kbd>Ctrl+Shift+Z</kbd> / <kbd>Ctrl+Shift+X</kbd> scroll notes up / down</span>
+    <span><kbd>Ctrl+Alt+&larr;</kbd> / <kbd>Ctrl+Alt+&rarr;</kbd> previous / next note</span>
+    <span><kbd>Ctrl+Alt+H</kbd> clean view (only the preview)</span>
+    <span class="grp">In this window:</span>
+    <span><kbd>S</kbd> notes left / right</span>
+    <span><kbd>N</kbd> layout</span>
+    <span><kbd>P</kbd> freeze preview</span>
+    <span><kbd>T</kbd> theme</span>
+    <span><kbd>H</kbd> or <kbd>Esc</kbd> clean view</span>
+    <span class="spacer"></span>
+    <button id="hints-close" title="Hide this bar (the Help button brings it back)">&times;</button>
+  </div>
   <main>
     <section id="preview"><video id="video" autoplay muted></video><p id="status"></p></section>
     <div id="divider" title="Drag to resize (double-click to reset)"></div>

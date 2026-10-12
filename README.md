@@ -127,6 +127,7 @@ These work when the app window is focused:
 
 Other things worth knowing:
 
+- A shortcut bar under the toolbar lists the keys, so you do not have to memorise them. Close it with the x; **Help** brings it back.
 - The **Help** button shows the controls (the first note of the bundled `notes.md`).
 - Drag the divider between the preview and the notes to resize them; double-click it to reset. The size is remembered.
 - Open a file from the command line: `npm start -- my-talk.md`, or drop a `.md` file on the window.

@@ -70,3 +70,13 @@ body.clean header, body.clean #notes, body.clean #pad, body.clean #divider, body
 body.clean #preview { flex: 1; }
 /* Notes on the left: same DOM, mirrored row. */
 body.notes-left main { flex-direction: row-reverse; }
+
+#hints { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 14px; padding: 5px 12px; background: #171717; border-bottom: 1px solid #2a2a2a; font-size: 12px; color: #aaa; }
+#hints .grp { color: #7cb7ff; font-weight: 600; }
+#hints .spacer { flex: 1; }
+#hints kbd { background: #2a2a2a; border: 1px solid #444; border-radius: 3px; padding: 0 5px; font-family: Consolas, monospace; color: #ddd; }
+#hints button { padding: 0 8px; font-size: 14px; line-height: 18px; }
+#hints.off, body.clean #hints { display: none; }
+body.light #hints { background: #eee; border-bottom-color: #ccc; color: #555; }
+body.light #hints .grp { color: #1b5fc7; }
+body.light #hints kbd { background: #fff; border-color: #bbb; color: #222; }
