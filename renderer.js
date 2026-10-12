@@ -28,11 +28,13 @@ function showNote(keepScroll) {
   $('outline').value = String(current)
 }
 
-function go(delta) {
+function goTo(index) {
   if (!sections.length) return
-  current = Math.min(sections.length - 1, Math.max(0, current + delta))
+  current = Math.min(sections.length - 1, Math.max(0, index))
   showNote()
 }
+
+function go(delta) { goTo(current + delta) }
 
 // ---------- Preview ----------
 
@@ -123,6 +125,9 @@ document.addEventListener('keydown', e => {
   if (e.target.tagName === 'SELECT' || e.target.tagName === 'INPUT') return // arrows belong to the control
   if (e.key === 'ArrowRight') go(1)
   else if (e.key === 'ArrowLeft') go(-1)
+  else if (e.key === 'Home') goTo(0)
+  else if (e.key === 'End') goTo(sections.length - 1)
+  else if (/^[1-9]$/.test(e.key)) goTo(Number(e.key) - 1)
 })
 
 applyFont()
