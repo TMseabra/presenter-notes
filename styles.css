@@ -34,3 +34,7 @@ body.light #notes pre { background: #ececec; }
 body.light #notes blockquote { color: #555; }
 body.light #timer.over { color: #c62828; }
 #video.frozen { outline: 3px solid #d9a400; }
+body.only-notes #preview { display: none; }
+body.only-preview #notes { display: none; }
+body.only-preview #preview { flex: 1; }
+body.only-notes #notes { flex: 1; }

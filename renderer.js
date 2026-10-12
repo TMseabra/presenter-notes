@@ -128,6 +128,19 @@ function toggleFreeze() {
   $('freeze').classList.toggle('active', frozen)
 }
 $('freeze').onclick = toggleFreeze
+
+// Layout cycles: both -> notes only -> preview only -> both.
+const layouts = ['both', 'only-notes', 'only-preview']
+let layout = layouts.includes(settings.layout) ? settings.layout : 'both'
+function applyLayout() {
+  document.body.classList.remove('only-notes', 'only-preview')
+  if (layout !== 'both') document.body.classList.add(layout)
+  settings.layout = layout
+  saveSettings()
+}
+function cycleLayout() { layout = layouts[(layouts.indexOf(layout) + 1) % layouts.length]; applyLayout() }
+$('layout').onclick = cycleLayout
+applyLayout()
 $('theme').onclick = toggleTheme
 if (settings.light) document.body.classList.add('light')
 
@@ -163,6 +176,7 @@ document.addEventListener('keydown', e => {
   else if (/^[1-9]$/.test(e.key)) goTo(Number(e.key) - 1)
   else if (e.key === 't' || e.key === 'T') toggleTheme()
   else if (e.key === 'p' || e.key === 'P') toggleFreeze()
+  else if (e.key === 'n' || e.key === 'N') cycleLayout()
   else if (e.key === ']') changeTeleSpeed(1)
   else if (e.key === '[') changeTeleSpeed(-1)
   else if (e.key === 'ArrowDown') notesEl.scrollBy(0, notesEl.clientHeight / 4)
