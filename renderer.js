@@ -70,10 +70,21 @@ async function loadDisplays() {
 // ---------- Teleprompter ----------
 
 let teleTimer = null
+let teleSpeed = settings.teleSpeed || 1 // pixels per 30 ms tick
+
+function renderTeleLabel() { $('tele').textContent = `Teleprompter x${teleSpeed}` }
+
 function toggleTeleprompter() {
   if (teleTimer) { clearInterval(teleTimer); teleTimer = null }
-  else teleTimer = setInterval(() => { notesEl.scrollTop += 1 }, 30)
+  else teleTimer = setInterval(() => { notesEl.scrollTop += teleSpeed }, 30)
   $('tele').classList.toggle('active', !!teleTimer)
+}
+
+function changeTeleSpeed(delta) {
+  teleSpeed = Math.min(10, Math.max(1, teleSpeed + delta))
+  settings.teleSpeed = teleSpeed
+  saveSettings()
+  renderTeleLabel()
 }
 
 // ---------- Timer ----------
@@ -128,6 +139,8 @@ document.addEventListener('keydown', e => {
   else if (e.key === 'Home') goTo(0)
   else if (e.key === 'End') goTo(sections.length - 1)
   else if (/^[1-9]$/.test(e.key)) goTo(Number(e.key) - 1)
+  else if (e.key === ']') changeTeleSpeed(1)
+  else if (e.key === '[') changeTeleSpeed(-1)
   else if (e.key === 'ArrowDown') notesEl.scrollBy(0, notesEl.clientHeight / 4)
   else if (e.key === 'ArrowUp') notesEl.scrollBy(0, -notesEl.clientHeight / 4)
   else if (e.key === 'PageDown') notesEl.scrollBy(0, notesEl.clientHeight * 0.9)
@@ -135,5 +148,6 @@ document.addEventListener('keydown', e => {
 })
 
 applyFont()
+renderTeleLabel()
 loadDisplays()
 window.api.defaultNotes().then(r => setNotes(r.content))
