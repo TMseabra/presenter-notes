@@ -94,7 +94,11 @@ let timerId = null
 function renderTimer() {
   const p = n => String(n).padStart(2, '0')
   $('timer').textContent = `${p(Math.floor(elapsed / 3600))}:${p(Math.floor(elapsed / 60) % 60)}:${p(elapsed % 60)}`
+  const target = Number($('target').value)
+  $('timer').classList.toggle('over', target > 0 && elapsed > target * 60)
 }
+$('target').oninput = () => { settings.target = $('target').value; saveSettings(); renderTimer() }
+if (settings.target) $('target').value = settings.target
 $('timer-toggle').onclick = () => {
   if (timerId) { clearInterval(timerId); timerId = null; $('timer-toggle').textContent = 'Start' }
   else { timerId = setInterval(() => { elapsed++; renderTimer() }, 1000); $('timer-toggle').textContent = 'Pause' }

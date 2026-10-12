@@ -21,3 +21,5 @@ main { flex: 1; display: flex; min-height: 0; }
 #notes pre code { padding: 0; background: none; }
 #notes blockquote { margin: 0 0 16px; padding-left: 16px; border-left: 4px solid #7cb7ff; color: #bbb; }
 #notes hr { border: 0; border-top: 1px solid #444; margin: 20px 0; }
+#timer.over { color: #ff5c5c; }
+#target { width: 60px; background: #2a2a2a; color: #eee; border: 1px solid #444; border-radius: 4px; padding: 5px; }
