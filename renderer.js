@@ -236,6 +236,42 @@ function applyLayout() {
 }
 function cycleLayout() { layout = layouts[(layouts.indexOf(layout) + 1) % layouts.length]; applyLayout() }
 $('layout').onclick = cycleLayout
+
+// Clean view hides the toolbar and the side panels, leaving only the live preview.
+function toggleClean() { document.body.classList.toggle('clean') }
+$('clean').onclick = toggleClean
+$('preview').ondblclick = toggleClean // quick way back out
+window.api.onCleanToggle(toggleClean)
+
+// Draggable divider between the preview and the notes; double-click resets it.
+const DEFAULT_SPLIT = 60
+function setSplit(percent, save) {
+  const value = Math.min(85, Math.max(15, percent))
+  document.documentElement.style.setProperty('--split', String(value))
+  if (save) { settings.split = value; saveSettings() }
+}
+setSplit(settings.split || DEFAULT_SPLIT)
+$('divider').addEventListener('pointerdown', e => {
+  e.preventDefault()
+  const divider = $('divider')
+  const main = divider.parentElement
+  divider.classList.add('dragging')
+  const move = ev => {
+    const rect = main.getBoundingClientRect()
+    setSplit(((ev.clientX - rect.left) / rect.width) * 100, true)
+  }
+  const up = () => {
+    divider.classList.remove('dragging')
+    document.removeEventListener('pointermove', move)
+    document.removeEventListener('pointerup', up)
+  }
+  document.addEventListener('pointermove', move)
+  document.addEventListener('pointerup', up)
+})
+$('divider').ondblclick = () => setSplit(DEFAULT_SPLIT, true)
+
+// Ctrl+Shift+Up/Down (global) scrolls the notes a little while you keep typing in another app.
+window.api.onScroll(dir => scroller().scrollBy(0, dir * 90))
 applyLayout()
 $('theme').onclick = toggleTheme
 if (settings.light) document.body.classList.add('light')
@@ -282,6 +318,7 @@ document.addEventListener('keydown', e => {
   else if (e.key === 't' || e.key === 'T') toggleTheme()
   else if (e.key === 'p' || e.key === 'P') toggleFreeze()
   else if (e.key === 'n' || e.key === 'N') cycleLayout()
+  else if (e.key === 'h' || e.key === 'H' || e.key === 'Escape') { if (e.key !== 'Escape' || document.body.classList.contains('clean')) toggleClean() }
   else if (e.key === ']') changeTeleSpeed(1)
   else if (e.key === '[') changeTeleSpeed(-1)
   else if (e.key === 'ArrowDown') scroller().scrollBy(0, scroller().clientHeight / 4)

@@ -43,8 +43,8 @@ function createWindow() {
   win.loadFile(path.join(__dirname, 'index.html'))
 }
 
-function send(channel) {
-  if (win && !win.isDestroyed()) win.webContents.send(channel)
+function send(channel, data) {
+  if (win && !win.isDestroyed()) win.webContents.send(channel, data)
 }
 
 function registerShortcuts() {
@@ -52,6 +52,10 @@ function registerShortcuts() {
   globalShortcut.register('CommandOrControl+Alt+Right', () => send('note:next'))
   globalShortcut.register('CommandOrControl+Alt+Left', () => send('note:prev'))
   globalShortcut.register('CommandOrControl+Alt+Space', () => send('teleprompter:toggle'))
+  // Scroll the notes while another app (VS Code) has focus.
+  globalShortcut.register('CommandOrControl+Shift+Up', () => send('notes:scroll', -1))
+  globalShortcut.register('CommandOrControl+Shift+Down', () => send('notes:scroll', 1))
+  globalShortcut.register('CommandOrControl+Alt+H', () => send('view:clean-toggle'))
 }
 
 ipcMain.handle('displays:list', async () => {

@@ -107,6 +107,8 @@ Notes are split into one note per `## ` heading; see `notes.md` for an example. 
 |---|---|
 | `Ctrl+Alt+Right` / `Ctrl+Alt+Left` | Next / previous note (global) |
 | `Ctrl+Alt+Space` | Start / stop teleprompter (global) |
+| `Ctrl+Shift+Up` / `Ctrl+Shift+Down` | Scroll the notes / notepad a little (global, works while you type in VS Code) |
+| `Ctrl+Alt+H` | Clean view on / off (global) |
 
 These work when the app window is focused:
 
@@ -118,10 +120,12 @@ These work when the app window is focused:
 | `[` / `]` | Slower / faster teleprompter |
 | `P` | Freeze / resume the preview |
 | `N` | Layout: both, notes only, preview only |
+| `H` / `Esc` | Clean view: only the preview, no toolbar or side panels (double-click the preview also toggles it) |
 | `T` | Light / dark theme |
 
 Other things worth knowing:
 
+- Drag the divider between the preview and the notes to resize them; double-click it to reset. The size is remembered.
 - Open a file from the command line: `npm start -- my-talk.md`, or drop a `.md` file on the window.
 - The outline dropdown jumps to any note.
 - Set the talk length in minutes next to the timer; it turns red once you go over.

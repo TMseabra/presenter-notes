@@ -55,3 +55,16 @@ body.light #pad { background: #fff; }
 body.light #padbar { background: #e6e6e6; border-bottom-color: #ccc; }
 body.only-preview #pad { display: none; }
 body.only-notes #pad { flex: 1; }
+
+/* Resizable split: --split is the preview's share of the width, in percent. */
+:root { --split: 60; }
+#preview { flex: 0 0 calc(var(--split) * 1%); min-width: 0; }
+#notes, #pad { flex: 1; min-width: 0; }
+#divider { flex: 0 0 8px; cursor: col-resize; background: #2a2a2a; }
+#divider:hover, #divider.dragging { background: #2d6cdf; }
+body.light #divider { background: #ccc; }
+body.only-notes #divider, body.only-preview #divider { display: none; }
+body.only-preview #preview, body.only-notes #notes, body.only-notes #pad { flex: 1; }
+/* Clean view: only the live preview, so the window looks like the plain screen. */
+body.clean header, body.clean #notes, body.clean #pad, body.clean #divider, body.clean #status { display: none; }
+body.clean #preview { flex: 1; }

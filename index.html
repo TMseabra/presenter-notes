@@ -20,6 +20,7 @@
     <label class="check"><input type="checkbox" id="ontop"> Always on top</label>
     <label class="check"><input type="checkbox" id="hide"> Hide from screen sharing</label>
     <span class="spacer"></span>
+    <button id="clean" title="Hide everything except the preview (H, or Ctrl+Alt+H from anywhere)">Clean view</button>
     <button id="layout" title="Notes only / preview only / both (N)">Layout</button>
     <button id="freeze" title="Freeze / resume the preview (P)">Freeze</button>
     <button id="theme" title="Light / dark theme (T)">Theme</button>
@@ -32,6 +33,7 @@
   </header>
   <main>
     <section id="preview"><video id="video" autoplay muted></video><p id="status"></p></section>
+    <div id="divider" title="Drag to resize (double-click to reset)"></div>
     <section id="notes"></section>
     <section id="pad">
       <div id="padbar">

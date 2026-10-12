@@ -12,5 +12,7 @@ contextBridge.exposeInMainWorld('api', {
   onPrev: cb => on('note:prev', cb),
   onNotesChanged: cb => on('notes:changed', cb),
   onDisplaysChanged: cb => on('displays:changed', cb),
+  onScroll: cb => on('notes:scroll', cb),
+  onCleanToggle: cb => on('view:clean-toggle', cb),
   onTeleprompter: cb => on('teleprompter:toggle', cb)
 })
