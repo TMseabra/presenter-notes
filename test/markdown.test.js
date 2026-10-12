@@ -28,3 +28,13 @@ test('splitSections ignores headings inside code fences', () => {
 test('splitSections drops empty parts', () => {
   assert.deepStrictEqual(splitSections(''), [])
 })
+
+test('strikethrough, blockquote and rule', () => {
+  assert.strictEqual(inline('~~x~~'), '<del>x</del>')
+  assert.ok(renderMarkdown('> quote').includes('<blockquote>quote</blockquote>'))
+  assert.ok(renderMarkdown('---').includes('<hr>'))
+})
+
+test('a rule is not mistaken for a list item', () => {
+  assert.ok(!renderMarkdown('- - -').includes('<li>'))
+})

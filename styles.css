@@ -19,3 +19,5 @@ main { flex: 1; display: flex; min-height: 0; }
 #notes code { background: #2a2a2a; padding: 1px 6px; border-radius: 4px; font-family: Consolas, monospace; }
 #notes pre { background: #1c1c1c; padding: 12px; border-radius: 6px; overflow-x: auto; }
 #notes pre code { padding: 0; background: none; }
+#notes blockquote { margin: 0 0 16px; padding-left: 16px; border-left: 4px solid #7cb7ff; color: #bbb; }
+#notes hr { border: 0; border-top: 1px solid #444; margin: 20px 0; }

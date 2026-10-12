@@ -7,6 +7,7 @@ function inline(s) {
     .replace(/`([^`]+)`/g, '<code>$1</code>')
     .replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>')
     .replace(/\*([^*]+)\*/g, '<em>$1</em>')
+    .replace(/~~([^~]+)~~/g, '<del>$1</del>')
 }
 
 function renderMarkdown(md) {
@@ -27,12 +28,18 @@ function renderMarkdown(md) {
     if ((m = line.match(/^(#{1,3})\s+(.*)/))) {
       closeList()
       out.push(`<h${m[1].length}>${inline(m[2])}</h${m[1].length}>`)
-    } else if ((m = line.match(/^\s*[-*]\s+(.*)/))) {
+    } else if (!/^\s*([-*_])(\s*\1){2,}\s*$/.test(line) && (m = line.match(/^\s*[-*]\s+(.*)/))) {
       if (list !== 'ul') { closeList(); out.push('<ul>'); list = 'ul' }
       out.push(`<li>${inline(m[1])}</li>`)
     } else if ((m = line.match(/^\s*\d+\.\s+(.*)/))) {
       if (list !== 'ol') { closeList(); out.push('<ol>'); list = 'ol' }
       out.push(`<li>${inline(m[1])}</li>`)
+    } else if (/^\s*([-*_])(\s*\1){2,}\s*$/.test(line)) {
+      closeList()
+      out.push('<hr>')
+    } else if ((m = line.match(/^>\s?(.*)/))) {
+      closeList()
+      out.push(`<blockquote>${inline(m[1])}</blockquote>`)
     } else if (line.trim()) {
       closeList()
       out.push(`<p>${inline(line)}</p>`)
