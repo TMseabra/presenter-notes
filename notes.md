@@ -4,6 +4,7 @@
 
 **De qualquer sítio, mesmo com o VS Code em foco**
 - `Ctrl+Shift+↑` / `Ctrl+Shift+↓` - scroll das notas para cima / baixo
+- `Ctrl+Shift+Z` / `Ctrl+Shift+X` - o mesmo (Z sobe, X desce), para uma mão no rato e outra no teclado
 - `Ctrl+Alt+→` / `Ctrl+Alt+←` - nota seguinte / anterior
 - `Ctrl+Alt+H` - Clean view: só o preview, sem barras
 - `Ctrl+Alt+Espaço` - liga / desliga o teleprompter

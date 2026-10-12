@@ -55,6 +55,9 @@ function registerShortcuts() {
   // Scroll the notes while another app (VS Code) has focus.
   globalShortcut.register('CommandOrControl+Shift+Up', () => send('notes:scroll', -1))
   globalShortcut.register('CommandOrControl+Shift+Down', () => send('notes:scroll', 1))
+  // Same thing on Z / X, so one hand can stay on the mouse and the other on the keyboard.
+  globalShortcut.register('CommandOrControl+Shift+Z', () => send('notes:scroll', -1))
+  globalShortcut.register('CommandOrControl+Shift+X', () => send('notes:scroll', 1))
   globalShortcut.register('CommandOrControl+Alt+H', () => send('view:clean-toggle'))
 }
 

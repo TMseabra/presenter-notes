@@ -108,6 +108,7 @@ Notes are split into one note per `## ` heading; see `notes.md` for an example. 
 | `Ctrl+Alt+Right` / `Ctrl+Alt+Left` | Next / previous note (global) |
 | `Ctrl+Alt+Space` | Start / stop teleprompter (global) |
 | `Ctrl+Shift+Up` / `Ctrl+Shift+Down` | Scroll the notes / notepad a little (global, works while you type in VS Code) |
+| `Ctrl+Shift+Z` / `Ctrl+Shift+X` | Same as above: Z scrolls up, X scrolls down |
 | `Ctrl+Alt+H` | Clean view on / off (global) |
 
 These work when the app window is focused:
