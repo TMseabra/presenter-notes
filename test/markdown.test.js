@@ -1,6 +1,6 @@
 const test = require('node:test')
 const assert = require('node:assert')
-const { renderMarkdown, splitSections, inline } = require('../markdown.js')
+const { renderMarkdown, splitSections, sectionTitle, inline } = require('../markdown.js')
 
 test('inline formatting', () => {
   assert.strictEqual(inline('a **b** `c` *d*'), 'a <strong>b</strong> <code>c</code> <em>d</em>')
@@ -37,4 +37,13 @@ test('strikethrough, blockquote and rule', () => {
 
 test('a rule is not mistaken for a list item', () => {
   assert.ok(!renderMarkdown('- - -').includes('<li>'))
+})
+
+test('sectionTitle uses the heading text', () => {
+  assert.strictEqual(sectionTitle('## File: main.js
+- x'), 'File: main.js')
+  assert.strictEqual(sectionTitle('
+
+plain line'), 'plain line')
+  assert.strictEqual(sectionTitle(''), '(empty)')
 })

@@ -85,6 +85,7 @@ function applyFont() { notesEl.style.fontSize = fontSize + 'px' }
 
 $('display').onchange = e => startPreview(e.target.value)
 $('open').onclick = async () => { const r = await window.api.openNotes(); if (r) setNotes(r.content) }
+$('outline').onchange = e => { current = Number(e.target.value); showNote(); e.target.blur() }
 $('prev').onclick = () => go(-1)
 $('next').onclick = () => go(1)
 $('tele').onclick = toggleTeleprompter
