@@ -4,7 +4,12 @@ const notesEl = $('notes')
 
 let sections = []
 let current = 0
-let fontSize = 28
+
+// Small persisted preferences (font size, window options).
+const settings = (() => { try { return JSON.parse(localStorage.getItem('settings')) || {} } catch { return {} } })()
+function saveSettings() { try { localStorage.setItem('settings', JSON.stringify(settings)) } catch {} }
+
+let fontSize = settings.fontSize || 28
 
 function setNotes(md, keepPosition) {
   sections = splitSections(md)
@@ -85,7 +90,16 @@ $('timer-reset').onclick = () => { elapsed = 0; renderTimer() }
 
 // ---------- Wiring ----------
 
-function applyFont() { notesEl.style.fontSize = fontSize + 'px' }
+function applyFont() {
+  notesEl.style.fontSize = fontSize + 'px'
+  settings.fontSize = fontSize
+  saveSettings()
+}
+
+// Restore the window options saved last time.
+for (const [id, key, apply] of [['ontop', 'ontop', window.api.setAlwaysOnTop], ['hide', 'hide', window.api.setContentProtection]]) {
+  if (settings[key]) { $(id).checked = true; apply(true) }
+}
 
 $('display').onchange = e => startPreview(e.target.value)
 $('open').onclick = async () => { const r = await window.api.openNotes(); if (r) setNotes(r.content) }
@@ -93,8 +107,8 @@ $('outline').onchange = e => { current = Number(e.target.value); showNote(); e.t
 $('prev').onclick = () => go(-1)
 $('next').onclick = () => go(1)
 $('tele').onclick = toggleTeleprompter
-$('ontop').onchange = e => window.api.setAlwaysOnTop(e.target.checked)
-$('hide').onchange = e => window.api.setContentProtection(e.target.checked)
+$('ontop').onchange = e => { window.api.setAlwaysOnTop(e.target.checked); settings.ontop = e.target.checked; saveSettings() }
+$('hide').onchange = e => { window.api.setContentProtection(e.target.checked); settings.hide = e.target.checked; saveSettings() }
 $('font-').onclick = () => { fontSize = Math.max(12, fontSize - 2); applyFont() }
 $('font+').onclick = () => { fontSize = Math.min(96, fontSize + 2); applyFont() }
 
