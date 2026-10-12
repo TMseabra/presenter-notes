@@ -8,6 +8,9 @@ let fontSize = 28
 
 function setNotes(md, keepPosition) {
   sections = splitSections(md)
+  const outline = $('outline')
+  outline.innerHTML = ''
+  sections.forEach((s, i) => outline.add(new Option(`${i + 1}. ${sectionTitle(s)}`, String(i))))
   current = keepPosition ? Math.min(current, Math.max(0, sections.length - 1)) : 0
   showNote(keepPosition)
 }
@@ -17,6 +20,7 @@ function showNote(keepScroll) {
   notesEl.innerHTML = sections.length ? renderMarkdown(sections[current]) : '<p>No notes loaded.</p>'
   notesEl.scrollTop = keepScroll ? top : 0
   $('counter').textContent = `${sections.length ? current + 1 : 0}/${sections.length}`
+  $('outline').value = String(current)
 }
 
 function go(delta) {
