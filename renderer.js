@@ -41,6 +41,8 @@ function go(delta) { goTo(current + delta) }
 async function startPreview(sourceId) {
   if (video.srcObject) video.srcObject.getTracks().forEach(t => t.stop())
   $('status').textContent = ''
+  video.classList.remove('frozen')
+  $('freeze').classList.remove('active')
   try {
     const stream = await navigator.mediaDevices.getUserMedia({
       audio: false,
@@ -118,6 +120,14 @@ function toggleTheme() {
   settings.light = document.body.classList.contains('light')
   saveSettings()
 }
+// Freezing pauses the <video> on the current frame; handy to inspect something on the big screen.
+function toggleFreeze() {
+  const frozen = !video.paused
+  if (frozen) video.pause(); else video.play()
+  video.classList.toggle('frozen', frozen)
+  $('freeze').classList.toggle('active', frozen)
+}
+$('freeze').onclick = toggleFreeze
 $('theme').onclick = toggleTheme
 if (settings.light) document.body.classList.add('light')
 
@@ -152,6 +162,7 @@ document.addEventListener('keydown', e => {
   else if (e.key === 'End') goTo(sections.length - 1)
   else if (/^[1-9]$/.test(e.key)) goTo(Number(e.key) - 1)
   else if (e.key === 't' || e.key === 'T') toggleTheme()
+  else if (e.key === 'p' || e.key === 'P') toggleFreeze()
   else if (e.key === ']') changeTeleSpeed(1)
   else if (e.key === '[') changeTeleSpeed(-1)
   else if (e.key === 'ArrowDown') notesEl.scrollBy(0, notesEl.clientHeight / 4)

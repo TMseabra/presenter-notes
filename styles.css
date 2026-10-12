@@ -33,3 +33,4 @@ body.light #notes code { background: #e4e4e4; }
 body.light #notes pre { background: #ececec; }
 body.light #notes blockquote { color: #555; }
 body.light #timer.over { color: #c62828; }
+#video.frozen { outline: 3px solid #d9a400; }
