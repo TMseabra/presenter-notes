@@ -4,7 +4,8 @@
   "description": "Live preview of the big screen plus speaker notes, for people presenting code.",
   "main": "main.js",
   "scripts": {
-    "start": "electron ."
+    "start": "electron .",
+    "test": "node --test test/"
   },
   "license": "MIT",
   "devDependencies": {
