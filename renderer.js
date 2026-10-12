@@ -113,6 +113,14 @@ function applyFont() {
   saveSettings()
 }
 
+function toggleTheme() {
+  document.body.classList.toggle('light')
+  settings.light = document.body.classList.contains('light')
+  saveSettings()
+}
+$('theme').onclick = toggleTheme
+if (settings.light) document.body.classList.add('light')
+
 // Restore the window options saved last time.
 for (const [id, key, apply] of [['ontop', 'ontop', window.api.setAlwaysOnTop], ['hide', 'hide', window.api.setContentProtection]]) {
   if (settings[key]) { $(id).checked = true; apply(true) }
@@ -143,6 +151,7 @@ document.addEventListener('keydown', e => {
   else if (e.key === 'Home') goTo(0)
   else if (e.key === 'End') goTo(sections.length - 1)
   else if (/^[1-9]$/.test(e.key)) goTo(Number(e.key) - 1)
+  else if (e.key === 't' || e.key === 'T') toggleTheme()
   else if (e.key === ']') changeTeleSpeed(1)
   else if (e.key === '[') changeTeleSpeed(-1)
   else if (e.key === 'ArrowDown') notesEl.scrollBy(0, notesEl.clientHeight / 4)
