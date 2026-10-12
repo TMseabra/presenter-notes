@@ -5,10 +5,31 @@ const path = require('path')
 let win
 let watcher = null
 
+const boundsFile = () => path.join(app.getPath('userData'), 'window.json')
+
+// Last window position/size, ignored if it would now be off every display (e.g. monitor unplugged).
+function loadBounds() {
+  try {
+    const b = JSON.parse(fs.readFileSync(boundsFile(), 'utf8'))
+    const visible = screen.getAllDisplays().some(d => {
+      const a = d.workArea
+      return b.x < a.x + a.width && b.x + b.width > a.x && b.y < a.y + a.height && b.y + b.height > a.y
+    })
+    return visible ? b : null
+  } catch {
+    return null
+  }
+}
+
+function saveBounds() {
+  if (!win || win.isDestroyed() || win.isMinimized() || win.isMaximized()) return
+  try { fs.writeFileSync(boundsFile(), JSON.stringify(win.getBounds())) } catch {}
+}
+
 function createWindow() {
+  const saved = loadBounds()
   win = new BrowserWindow({
-    width: 1280,
-    height: 720,
+    ...(saved || { width: 1280, height: 720 }),
     backgroundColor: '#111111',
     autoHideMenuBar: true,
     webPreferences: {
@@ -16,6 +37,9 @@ function createWindow() {
       contextIsolation: true
     }
   })
+  // The constructor can be off by a pixel or two with display scaling; setBounds restores the exact size.
+  if (saved) win.setBounds(saved)
+  win.on('close', saveBounds)
   win.loadFile(path.join(__dirname, 'index.html'))
 }
 
